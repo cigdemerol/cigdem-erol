@@ -1,0 +1,5 @@
+{
+  "name": "KNN Simülasyonu",
+  "description": "K-En Yakın Komşu (K-Nearest Neighbors) algoritmasının nasıl çalıştığını gösteren etkileşimli bir simülasyon aracı.",
+  "requestFramePermissions": []
+}
