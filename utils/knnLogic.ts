@@ -286,3 +286,54 @@ export const generateRandomDataset = (count: number, type: DatasetType = 'Contin
 export const snapToGrid = (val: number): number => {
     return Math.floor(val / 10) * 10 + 5;
 };
+
+// Perform Leave-One-Out Cross-Validation to find optimal K
+export const calculateCrossValidationErrors = (
+    dataset: DataPoint[],
+    maxK: number = 15,
+    metric: DistanceMetric,
+    pValue: number,
+    useScaling: boolean,
+    isUnbalanced: boolean,
+    votingStrategy: VotingStrategy
+): { k: number; errorRate: number }[] => {
+    
+    const results = [];
+
+    // Test for odd K values from 1 to maxK
+    for (let k = 1; k <= maxK; k += 2) {
+        let errorCount = 0;
+
+        // Leave-One-Out Loop
+        for (let i = 0; i < dataset.length; i++) {
+            const testPoint = dataset[i];
+            const trainSet = dataset.filter((_, index) => index !== i);
+
+            // Find neighbors for the test point using the training set
+            // Note: We pass the testPoint as the 'target'
+            const neighbors = findNearestNeighbors(
+                trainSet, 
+                testPoint, // Use test point coordinates
+                k,
+                metric,
+                pValue,
+                useScaling,
+                isUnbalanced
+            );
+
+            const stats = classifyPoint(neighbors, votingStrategy);
+            
+            // If the prediction is wrong (or a Tie), count as error
+            if (stats.winner === 'Tie' || stats.winner !== testPoint.label) {
+                errorCount++;
+            }
+        }
+
+        results.push({
+            k,
+            errorRate: errorCount / dataset.length
+        });
+    }
+
+    return results;
+};

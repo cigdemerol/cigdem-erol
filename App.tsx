@@ -4,6 +4,7 @@ import { RefreshCw, Info, Calculator, Database, Ruler, Settings2, Users, Scale, 
 import SimulationCanvas from './components/SimulationCanvas';
 import InfoPanel from './components/InfoPanel';
 import DatasetSection from './components/DatasetSection';
+import ElbowMethodPanel from './components/ElbowMethodPanel';
 import { DataPoint, DistanceMetric, VotingStrategy, DatasetType } from './types';
 import { findNearestNeighbors, classifyPoint, generateRandomDataset, snapToGrid } from './utils/knnLogic';
 
@@ -344,12 +345,24 @@ const App: React.FC = () => {
             </div>
 
             {/* Right Column: Info Panel */}
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-5 space-y-6">
                 <InfoPanel 
                     k={k}
                     neighbors={neighbors}
                     stats={stats}
                     targetPoint={targetPoint}
+                />
+                
+                {/* Elbow Method Panel */}
+                <ElbowMethodPanel 
+                    dataset={dataset}
+                    metric={metric}
+                    minkowskiP={minkowskiP}
+                    useScaling={useScaling}
+                    isUnbalanced={isUnbalanced}
+                    votingStrategy={votingStrategy}
+                    currentK={k}
+                    onSelectK={setK}
                 />
             </div>
 
